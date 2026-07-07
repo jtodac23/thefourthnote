@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+<meta name="robots" content="noindex, nofollow">    
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 <title>The Fourth Note</title>
@@ -253,7 +254,19 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 </style>
 </head>
 <body>
-
+<style>
+  body { visibility: hidden; }
+</style>
+<script>
+  const password = prompt("Enter password to view menu:");
+  if (password === "JANGANCAKAP") {
+    document.body.style.visibility = "visible";
+  } else {
+    document.title = "Access Denied";
+    window.stop();
+    document.documentElement.innerHTML = "<h1 style='text-align:center;margin-top:50px;'>Access Denied</h1>";
+  }
+</script> 
 <div class="hdr">
   <div class="logo">
     <div class="logo-mark">

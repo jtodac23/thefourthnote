@@ -1,0 +1,734 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Fourth Note</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#F5F4F0;--surface:#FFF;--border:#E5E3DC;--border-s:#C8C4B8;
+  --t1:#1A1A18;--t2:#5C5A54;--t3:#9C9A94;
+  --accent:#1C3B2A;
+  --gin:#0F6E56;--gin-bg:#E8F5F0;--gin-dot:#1D9E75;--gin-de:#B0DDD0;
+  --tequila:#7A4800;--tequila-bg:#FDF0DC;--tequila-dot:#C47F17;--tequila-de:#F0CC80;
+  --whiskey:#6B2318;--whiskey-bg:#FDF0EC;--whiskey-dot:#C45030;--whiskey-de:#F0A888;
+  --rum:#2E2878;--rum-bg:#EFEFFE;--rum-dot:#5048C8;--rum-de:#B8B4EC;
+  --vodka:#1A6B9A;--vodka-bg:#E8F4FB;--vodka-dot:#2E9ED4;--vodka-de:#A8D8F0;
+  --vs-dot:#8B0000;--vs-de:#D44444;
+  --gold:#B8963E;--gold-bg:#FDF5E0;
+  --r:12px;--r-s:8px;
+  --sh:0 1px 6px rgba(0,0,0,0.05);--sh-md:0 4px 18px rgba(0,0,0,0.09);--sh-lg:0 12px 40px rgba(0,0,0,0.13);
+}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--bg);color:var(--t1);display:flex;flex-direction:column;height:100vh;overflow:hidden}
+
+/* HEADER */
+.hdr{background:var(--accent);padding:12px 24px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+.logo{display:flex;align-items:center;gap:10px}
+.logo-mark{width:30px;height:30px;border:1.5px solid rgba(255,255,255,0.45);border-radius:50%;display:flex;align-items:center;justify-content:center}
+.logo-name{color:#fff;font-size:15px;font-weight:600;letter-spacing:0.02em}
+.logo-sub{color:rgba(255,255,255,0.4);font-size:10px;letter-spacing:0.1em;text-transform:uppercase;margin-top:1px}
+.hdr-r{display:flex;align-items:center;gap:8px}
+.srch{display:flex;align-items:center;gap:7px;background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.15);border-radius:8px;padding:6px 12px;width:190px}
+.srch input{border:none;background:transparent;font-size:13px;color:#fff;outline:none;width:100%}
+.srch input::placeholder{color:rgba(255,255,255,0.38)}
+.add-btn{display:flex;align-items:center;gap:6px;background:rgba(255,255,255,0.12);color:#fff;border:1px solid rgba(255,255,255,0.2);border-radius:8px;padding:6px 13px;font-size:13px;font-weight:500;cursor:pointer;white-space:nowrap;transition:background .15s}
+.add-btn:hover{background:rgba(255,255,255,0.2)}
+
+/* FILTER BAR */
+.fbar{background:var(--surface);border-bottom:1px solid var(--border);padding:0 24px;flex-shrink:0}
+.frows{padding:10px 0 8px;display:flex;flex-direction:column;gap:7px}
+.frow{display:flex;align-items:center;gap:7px;flex-wrap:wrap}
+.frl{font-size:10px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:var(--t3);width:64px;flex-shrink:0}
+.pill{font-size:12px;font-weight:500;padding:3px 10px;border-radius:999px;border:1px solid var(--border);cursor:pointer;transition:all .15s;background:transparent;color:var(--t2);user-select:none;display:inline-flex;align-items:center;gap:3px}
+.pill:hover{border-color:var(--border-s);color:var(--t1)}
+.pill.on{background:var(--accent);color:#fff;border-color:var(--accent)}
+.pill.on-gin{background:var(--gin-bg);color:var(--gin);border-color:var(--gin-dot)}
+.pill.on-tequila{background:var(--tequila-bg);color:var(--tequila);border-color:var(--tequila-dot)}
+.pill.on-whiskey{background:var(--whiskey-bg);color:var(--whiskey);border-color:var(--whiskey-dot)}
+.pill.on-rum{background:var(--rum-bg);color:var(--rum);border-color:var(--rum-dot)}
+.pill.on-vodka{background:var(--vodka-bg);color:var(--vodka);border-color:var(--vodka-dot)}
+.pill.on-light{background:#EBF7EB;color:#1a4a1a;border-color:#90C890}
+.pill.on-medium{background:#FFF8E0;color:#7a4a00;border-color:#E0B840}
+.pill.on-strong{background:#FCEAEA;color:#8B1A1A;border-color:#D88080}
+.pill.on-vs{background:#200000;color:#FF8888;border-color:#8B0000}
+
+/* STATUS */
+.sbar{padding:7px 24px;background:var(--bg);border-bottom:1px solid var(--border);display:flex;align-items:center;gap:7px;flex-wrap:wrap;font-size:12px;color:var(--t3);flex-shrink:0}
+.sbar-n{color:var(--t1);font-weight:500}
+.atag{display:inline-flex;align-items:center;gap:3px;background:var(--surface);border:1px solid var(--border);border-radius:999px;padding:1px 7px;font-size:11px;color:var(--t2)}
+.atag button{border:none;background:none;cursor:pointer;color:var(--t3);font-size:12px;line-height:1;padding:0 0 0 2px}
+.clear-lnk{color:var(--gin);font-weight:500;cursor:pointer;display:none}
+.clear-lnk:hover{text-decoration:underline}
+
+/* MAIN */
+.main{display:flex;flex:1;overflow:hidden}
+.gsec{flex:1;overflow-y:auto;padding:16px 20px}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:11px}
+
+/* ── CARD ── */
+.card{background:var(--surface);border-radius:var(--r);border:1px solid var(--border);overflow:hidden;cursor:pointer;transition:box-shadow .18s,transform .15s;box-shadow:var(--sh);position:relative}
+.card:hover{box-shadow:var(--sh-md);transform:translateY(-1px)}
+.card.sel{border-color:var(--accent);box-shadow:0 0 0 2px var(--accent),var(--sh-md);transform:none}
+.card.hidden{display:none}
+.card.vs-card .card-vis{background:#120000 !important}
+.cedit{position:absolute;top:7px;right:7px;width:25px;height:25px;border-radius:6px;background:rgba(255,255,255,0.9);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:3;opacity:0;transition:opacity .15s}
+.card:hover .cedit{opacity:1}
+.card-vis{height:110px;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;transition:background .3s}
+.gsvg{filter:drop-shadow(0 3px 8px rgba(0,0,0,0.10));transition:transform .3s}
+.card:hover .gsvg{transform:translateY(-3px) scale(1.05)}
+.cbf{position:absolute;top:7px;left:7px;display:flex;flex-direction:column;gap:3px}
+.fbadge{font-size:10px;font-weight:600;padding:2px 7px;border-radius:999px;display:inline-flex;align-items:center;gap:3px;white-space:nowrap}
+.fb-pick{background:var(--gold-bg);color:var(--gold);border:1px solid #E8C870}
+.fb-batch{background:#EEF6FF;color:#1D4ED8;border:1px solid #BFDBFE}
+.fb-easy{background:#F0FDF4;color:#15803D;border:1px solid #86EFAC}
+.fb-crowd{background:#FFF7ED;color:#9A3412;border:1px solid #FED7AA}
+.fb-vs{background:#120000;color:#FF7070;border:1px solid #8B0000}
+
+/* Card body */
+.cbody{padding:10px 12px 12px}
+.cchips{display:flex;gap:4px;flex-wrap:wrap;margin-bottom:7px}
+.chip{font-size:10px;font-weight:600;padding:2px 7px;border-radius:999px}
+.chip-gin    {background:var(--gin-bg);    color:var(--gin)}
+.chip-tequila{background:var(--tequila-bg);color:var(--tequila)}
+.chip-whiskey{background:var(--whiskey-bg);color:var(--whiskey)}
+.chip-rum    {background:var(--rum-bg);    color:var(--rum)}
+.chip-vodka  {background:var(--vodka-bg);  color:var(--vodka)}
+.chip-cat{background:var(--bg);color:var(--t2);border:1px solid var(--border)}
+.cname{font-size:14px;font-weight:650;color:var(--t1);margin-bottom:5px;line-height:1.25}
+
+/* Taste row — primary decision info */
+.ctaste{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:8px}
+.ttag{font-size:11.5px;color:var(--t2);display:flex;align-items:center;gap:2px}
+.ttag+.ttag::before{content:'·';color:var(--t3);margin-right:2px}
+
+/* Why chips */
+.cwhy{display:flex;gap:4px;flex-wrap:wrap;margin-bottom:9px}
+.wtag{font-size:10px;font-weight:500;padding:2px 7px;border-radius:999px;background:var(--bg);border:1px solid var(--border);color:var(--t2);white-space:nowrap}
+
+/* Strength footer */
+.cfoot{display:flex;align-items:center;justify-content:space-between}
+.sdots{display:flex;gap:3px;align-items:center}
+.sdot{width:7px;height:7px;border-radius:50%}
+.slabel{font-size:11px;color:var(--t2);margin-left:5px}
+
+/* Discover card */
+.disc-card{background:var(--surface);border-radius:var(--r);border:1.5px dashed var(--border);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px;text-align:center;gap:7px;cursor:default;min-height:220px}
+.disc-card h3{font-size:13px;font-weight:600}
+.disc-card p{font-size:12px;color:var(--t2)}
+.disc-btn{background:var(--accent);color:#fff;border:none;border-radius:8px;padding:7px 16px;font-size:12px;font-weight:600;cursor:pointer;margin-top:3px}
+
+/* ── PANEL ── */
+.panel{width:380px;min-width:380px;background:var(--surface);border-left:1px solid var(--border);display:flex;flex-direction:column;transition:width .22s,min-width .22s;overflow:hidden}
+.panel.closed{width:0;min-width:0;border:none}
+.pinner{width:380px;display:flex;flex-direction:column;height:100%}
+
+/* Recipe panel */
+.rpvis{height:160px;display:flex;align-items:center;justify-content:center;position:relative;flex-shrink:0}
+.rpcls{position:absolute;top:9px;right:9px;width:26px;height:26px;border-radius:50%;background:rgba(255,255,255,0.85);border:1px solid var(--border);cursor:pointer;display:flex;align-items:center;justify-content:center;z-index:2;box-shadow:var(--sh)}
+.rpscroll{flex:1;overflow-y:auto;padding:15px 17px}
+
+/* Why You'll Like It — top of panel */
+.rp-why-bar{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:14px}
+.rp-why-tag{font-size:11px;font-weight:500;padding:3px 9px;border-radius:999px;background:var(--bg);border:1px solid var(--border);color:var(--t2);display:flex;align-items:center;gap:3px}
+
+.rptitle{font-size:21px;font-weight:700;letter-spacing:-.3px;margin-bottom:3px}
+.rpsub{font-size:13px;color:var(--t2);margin-bottom:12px;line-height:1.5}
+.rpchips{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:12px}
+
+/* Taste banner */
+.taste-banner{background:var(--bg);border-radius:10px;padding:10px 12px;display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px;border:1px solid var(--border)}
+.taste-item{font-size:12.5px;color:var(--t1);display:flex;align-items:center;gap:4px}
+
+/* Meta strip */
+.rpmeta{display:flex;border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-bottom:18px}
+.rpmc{flex:1;padding:8px 0 8px 11px;border-right:1px solid var(--border)}
+.rpmc:last-child{border-right:none}
+.rpml{font-size:9.5px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:var(--t3);margin-bottom:2px}
+.rpmv{font-size:12.5px;font-weight:500;color:var(--t1);display:flex;align-items:center;gap:4px}
+
+/* VS warning */
+.vs-warn{background:#120000;border:1px solid #8B0000;border-radius:10px;padding:10px 12px;font-size:12px;color:#FF9090;display:flex;gap:8px;margin-bottom:14px;line-height:1.5}
+
+/* Sections */
+.rpsec{margin-bottom:18px}
+.rpsh{font-size:11px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--t3);margin-bottom:9px;display:flex;align-items:center;gap:6px}
+
+/* Why section */
+.rp-why-block{border-left:3px solid;border-radius:8px;padding:11px 13px;font-size:13px;color:var(--t2);line-height:1.6;margin-bottom:18px}
+
+/* Ingredients */
+.igrid{display:grid;grid-template-columns:auto 1fr;gap:4px 13px}
+.iqty{font-family:'SF Mono',monospace;font-size:11.5px;color:var(--t3);text-align:right;white-space:nowrap;padding:1.5px 0}
+.iname{font-size:13px;color:var(--t1);padding:1.5px 0}
+
+/* Steps */
+.slist{display:flex;flex-direction:column;gap:10px}
+.srow{display:flex;gap:9px;align-items:flex-start;font-size:13px;line-height:1.5;color:var(--t1)}
+.snum{width:21px;height:21px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10.5px;font-weight:700;flex-shrink:0;margin-top:1.5px}
+
+/* Tip — with Why explanation */
+.tip-block{border-radius:10px;padding:12px 13px;display:flex;gap:9px;border-left:3px solid;margin-top:10px}
+.tip-inner{}
+.tip-lbl{font-size:11px;font-weight:700;color:var(--t1);letter-spacing:.04em;text-transform:uppercase;margin-bottom:4px}
+.tip-text{font-size:13px;color:var(--t2);line-height:1.55;margin-bottom:7px}
+.tip-why{font-size:12px;color:var(--t2);line-height:1.5;background:rgba(0,0,0,0.04);border-radius:6px;padding:7px 9px}
+.tip-why-lbl{font-weight:600;color:var(--t1);margin-right:3px}
+
+/* Bartender notes */
+.bn-btn{display:flex;align-items:center;justify-content:center;gap:6px;width:calc(100% - 34px);margin:0 17px 6px;border:1.5px solid var(--border);background:var(--bg);color:var(--t1);border-radius:10px;padding:9px 0;font-size:13px;font-weight:500;cursor:pointer;transition:border-color .15s;flex-shrink:0}
+.bn-btn:hover{border-color:var(--accent)}
+.bn-btn:disabled{opacity:.5;cursor:not-allowed}
+.bn-wrap{margin:0 17px 17px;display:none}
+.bn-wrap.open{display:block}
+.bn-load{font-size:12px;color:var(--t2);padding:7px 0;display:flex;align-items:center;gap:5px}
+.bn-list{display:flex;flex-direction:column;gap:5px}
+.bn-item{background:var(--bg);border-radius:8px;padding:9px 11px;font-size:13px;color:var(--t2);line-height:1.5}
+.bn-item-hd{display:flex;align-items:center;gap:7px;margin-bottom:3px}
+.bn-icon{font-size:15px}
+.bn-title{font-size:11.5px;font-weight:700;color:var(--t1)}
+.bn-note{}
+.bn-why{font-size:12px;background:rgba(0,0,0,0.04);border-radius:6px;padding:6px 9px;margin-top:5px;color:var(--t2);line-height:1.5}
+.bn-why-lbl{font-weight:600;color:var(--t1);margin-right:3px}
+
+/* ── FORM ── */
+.fphd{padding:14px 17px 12px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+.fptitle{font-size:15px;font-weight:700}
+.fpsub{font-size:12px;color:var(--t2);margin-top:2px}
+.fpcls{width:27px;height:27px;border-radius:50%;background:var(--bg);border:1px solid var(--border);cursor:pointer;display:flex;align-items:center;justify-content:center}
+.fbody{padding:15px 17px;flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:13px}
+.fl{font-size:10.5px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--t3);margin-bottom:4px}
+.fi{width:100%;border:1px solid var(--border);border-radius:8px;padding:8px 11px;font-size:13px;font-family:inherit;color:var(--t1);background:var(--bg);outline:none;resize:none;transition:border-color .15s}
+.fi:focus{border-color:var(--accent);background:#fff}
+.fgrid{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+.fsel{width:100%;border:1px solid var(--border);border-radius:8px;padding:8px 11px;font-size:13px;font-family:inherit;color:var(--t1);background:var(--bg);outline:none;cursor:pointer}
+.ing-lf{display:flex;flex-direction:column;gap:5px}
+.ing-rf{display:grid;grid-template-columns:72px 1fr 24px;gap:5px;align-items:center}
+.ing-rf input{width:100%;border:1px solid var(--border);border-radius:7px;padding:6px 9px;font-size:12px;font-family:inherit;background:var(--bg);outline:none}
+.ing-rf input:focus{border-color:var(--accent);background:#fff}
+.rm-btn{width:24px;height:24px;border-radius:6px;border:none;background:#fef2f2;color:#dc2626;cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center}
+.add-r-btn{font-size:12px;color:var(--gin);font-weight:500;border:none;background:none;cursor:pointer;padding:2px 0;display:flex;align-items:center;gap:3px}
+.slif{display:flex;flex-direction:column;gap:5px}
+.srf{display:grid;grid-template-columns:18px 1fr 24px;gap:5px;align-items:flex-start}
+.srf-n{font-size:11px;font-weight:700;color:var(--t3);padding-top:7px;text-align:center}
+.srf textarea{width:100%;border:1px solid var(--border);border-radius:7px;padding:6px 9px;font-size:12px;font-family:inherit;background:var(--bg);outline:none;resize:none;min-height:38px}
+.srf textarea:focus{border-color:var(--accent);background:#fff}
+.ai-box{background:linear-gradient(135deg,#EBF7F0,#F5F4F0);border:1.5px solid #A8DFC8;border-radius:11px;padding:13px}
+.ai-lbl{font-size:10.5px;font-weight:700;color:var(--gin);letter-spacing:.06em;text-transform:uppercase;margin-bottom:7px;display:flex;align-items:center;gap:4px}
+.ai-ta{width:100%;border:1px solid #A8DFC8;border-radius:8px;padding:9px 11px;font-size:13px;font-family:inherit;background:#fff;outline:none;resize:none;min-height:66px;color:var(--t1)}
+.ai-ta:focus{border-color:var(--gin)}
+.ai-btn-g{margin-top:7px;width:100%;background:var(--gin);color:#fff;border:none;border-radius:8px;padding:9px 0;font-size:13px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px}
+.ai-btn-g:hover{opacity:.88}
+.ai-btn-g:disabled{opacity:.5;cursor:not-allowed}
+.ai-st{font-size:12px;color:var(--gin);margin-top:6px;text-align:center;min-height:15px}
+.divider{display:flex;align-items:center;gap:9px;color:var(--t3);font-size:12px}
+.divider::before,.divider::after{content:'';flex:1;height:1px;background:var(--border)}
+.ffoot{padding:13px 17px;border-top:1px solid var(--border);display:flex;gap:7px;flex-shrink:0}
+.sv-btn{flex:1;background:var(--accent);color:#fff;border:none;border-radius:10px;padding:11px 0;font-size:13px;font-weight:600;cursor:pointer}
+.sv-btn:hover{opacity:.88}
+.cc-btn{background:var(--bg);color:var(--t2);border:1px solid var(--border);border-radius:10px;padding:11px 16px;font-size:13px;font-weight:500;cursor:pointer}
+
+::-webkit-scrollbar{width:4px}
+::-webkit-scrollbar-thumb{background:#ddd;border-radius:2px}
+</style>
+</head>
+<body>
+
+<div class="hdr">
+  <div class="logo">
+    <div class="logo-mark">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.8)" stroke-width="1.5"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
+    </div>
+    <div>
+      <div class="logo-name">The Fourth Note</div>
+      <div class="logo-sub" id="hdr-sub">Home Bar · 21 Drinks</div>
+    </div>
+  </div>
+  <div class="hdr-r">
+    <div class="srch">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.45)" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+      <input type="text" placeholder="Refreshing, fruity, whiskey..." id="searchInput">
+    </div>
+    <button class="add-btn" onclick="openAdd()">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>
+      Add Drink
+    </button>
+  </div>
+</div>
+
+<div class="fbar">
+  <div class="frows">
+    <div class="frow">
+      <div class="frl">Spirit</div>
+      <span class="pill" data-g="spirit" data-v="gin"     data-ac="on-gin">🌿 Gin</span>
+      <span class="pill" data-g="spirit" data-v="tequila" data-ac="on-tequila">🌵 Tequila</span>
+      <span class="pill" data-g="spirit" data-v="whiskey" data-ac="on-whiskey">🥃 Whiskey</span>
+      <span class="pill" data-g="spirit" data-v="rum"     data-ac="on-rum">🌴 Rum</span>
+      <span class="pill" data-g="spirit" data-v="vodka"   data-ac="on-vodka">🧊 Vodka</span>
+    </div>
+    <div class="frow">
+      <div class="frl">Mood</div>
+      <span class="pill" data-g="mood" data-v="light">✨ Light &amp; Fizzy</span>
+      <span class="pill" data-g="mood" data-v="citrus">🍋 Citrus Forward</span>
+      <span class="pill" data-g="mood" data-v="tropical">🌴 Tropical</span>
+      <span class="pill" data-g="mood" data-v="bold">🔥 Bold &amp; Strong</span>
+    </div>
+    <div class="frow">
+      <div class="frl">Strength</div>
+      <span class="pill" data-g="strength" data-v="light"   data-ac="on-light">🟢 Light</span>
+      <span class="pill" data-g="strength" data-v="medium"  data-ac="on-medium">🟡 Medium</span>
+      <span class="pill" data-g="strength" data-v="strong"  data-ac="on-strong">🔴 Strong</span>
+      <span class="pill" data-g="strength" data-v="vstrong" data-ac="on-vs">💀 Very Strong</span>
+    </div>
+    <div class="frow">
+      <div class="frl">For</div>
+      <span class="pill" data-g="occasion" data-v="solo">👤 Just Me</span>
+      <span class="pill" data-g="occasion" data-v="group">👥 Small Group</span>
+      <span class="pill" data-g="occasion" data-v="both">🎉 Party</span>
+    </div>
+  </div>
+</div>
+
+<div class="sbar">
+  <span class="sbar-n" id="status-text">21 drinks</span>
+  <span id="atags"></span>
+  <span class="clear-lnk" id="clear-lnk" onclick="resetFilters()">Clear all</span>
+</div>
+
+<div class="main">
+  <div class="gsec"><div class="grid" id="grid"></div></div>
+
+  <div class="panel closed" id="panel">
+    <!-- RECIPE -->
+    <div class="pinner" id="recipe-view" style="display:none;flex-direction:column">
+      <div class="rpvis" id="rpvis">
+        <button class="rpcls" onclick="closePanel()"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#333" stroke-width="2.5"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
+      </div>
+      <div class="rpscroll" id="rpscroll">
+        <div class="rp-why-bar" id="rp-why-bar"></div>
+        <div class="rptitle"  id="rptitle"></div>
+        <div class="rpsub"    id="rpsub"></div>
+        <div class="rpchips"  id="rpchips"></div>
+        <div class="taste-banner" id="rptaste"></div>
+        <div id="rp-vs-warn"></div>
+        <div class="rpmeta"   id="rpmeta"></div>
+        <div class="rpsec">
+          <div class="rpsh">Why You'll Like It</div>
+          <div id="rp-why-block"></div>
+        </div>
+        <div class="rpsec">
+          <div class="rpsh">What You'll Need</div>
+          <div class="igrid" id="rpings"></div>
+        </div>
+        <div class="rpsec">
+          <div class="rpsh">How To Make It</div>
+          <div class="slist" id="rpsteps"></div>
+        </div>
+        <div id="rptip" style="margin-bottom:16px"></div>
+      </div>
+      <button class="bn-btn" id="bn-btn" onclick="loadNotes()">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        Bartender Notes
+      </button>
+      <div class="bn-wrap" id="bn-wrap">
+        <div class="bn-load" id="bn-load" style="display:none">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg>
+          Generating notes...
+        </div>
+        <div class="bn-list" id="bn-list"></div>
+      </div>
+    </div>
+
+    <!-- FORM -->
+    <div class="pinner" id="form-view" style="display:none;flex-direction:column">
+      <div class="fphd">
+        <div><div class="fptitle" id="fptitle">Add a Drink</div><div class="fpsub" id="fpsub">Describe it or fill manually</div></div>
+        <button class="fpcls" onclick="closePanel()"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#333" stroke-width="2.5"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
+      </div>
+      <div class="fbody">
+        <div class="ai-box" id="ai-box">
+          <div class="ai-lbl"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg> AI Assist</div>
+          <textarea class="ai-ta" id="ai-prompt" placeholder="e.g. Something refreshing with vodka for a party, not too strong..." rows="3"></textarea>
+          <button class="ai-btn-g" id="ai-btn" onclick="genAI()"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg> Generate</button>
+          <div class="ai-st" id="ai-st"></div>
+        </div>
+        <div class="divider">or fill manually</div>
+        <div><div class="fl">Name</div><input class="fi" type="text" id="f-name" placeholder="e.g. Sunset Mule"></div>
+        <div><div class="fl">One-line description</div><input class="fi" type="text" id="f-sub" placeholder="e.g. Tropical, sweet, easy drinking"></div>
+        <div><div class="fl">Why guests will love it</div><textarea class="fi" id="f-why" rows="2" placeholder="e.g. Light, crowd-pleasing, perfect for hot evenings"></textarea></div>
+        <div class="fgrid">
+          <div><div class="fl">Spirit</div><select class="fsel" id="f-spirit"><option value="gin">Gin</option><option value="tequila">Tequila</option><option value="whiskey">Whiskey</option><option value="rum">Rum</option><option value="vodka">Vodka</option></select></div>
+          <div><div class="fl">Style</div><select class="fsel" id="f-cat"><option value="spritz">Light & Fizzy</option><option value="sour">Citrus Forward</option><option value="mule">Buck / Mule</option><option value="strong">Spirit Forward</option></select></div>
+        </div>
+        <div class="fgrid">
+          <div><div class="fl">Strength</div><select class="fsel" id="f-strength"><option value="light">🟢 Light</option><option value="medium">🟡 Medium</option><option value="strong">🔴 Strong</option><option value="vstrong">💀 Very Strong</option></select></div>
+          <div><div class="fl">For</div><select class="fsel" id="f-for"><option value="solo">👤 Just Me</option><option value="group">👥 Small Group</option><option value="both">🎉 Party</option></select></div>
+        </div>
+        <div class="fgrid">
+          <div><div class="fl">Glassware</div><select class="fsel" id="f-glass"><option value="highball">🥤 Tall Glass</option><option value="rocks">🥃 Whiskey Glass</option><option value="coupe">🍸 Cocktail Glass</option><option value="wine">🍷 Wine Glass</option></select></div>
+          <div><div class="fl">Badge</div><select class="fsel" id="f-badge"><option value="">None</option><option value="pick">⭐ Bartender's Pick</option><option value="batch">🧊 Batch Friendly</option><option value="easy">✓ Beginner Friendly</option><option value="crowd">🎉 Crowd Favourite</option></select></div>
+        </div>
+        <div><div class="fl" style="margin-bottom:7px">Ingredients</div><div class="ing-lf" id="ing-list"></div><button class="add-r-btn" onclick="addIng()"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg> Add ingredient</button></div>
+        <div><div class="fl" style="margin-bottom:7px">Steps</div><div class="slif" id="slist"></div><button class="add-r-btn" onclick="addStep()"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg> Add step</button></div>
+        <div><div class="fl">Bartender tip</div><textarea class="fi" id="f-tip" rows="2" placeholder="Key tip for making this well..."></textarea></div>
+      </div>
+      <div class="ffoot">
+        <button class="cc-btn" onclick="closePanel()">Cancel</button>
+        <button class="sv-btn" onclick="saveDrink()">Save Drink</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const SC={
+  gin:    {c:'#0F6E56',bg:'#E8F5F0',dot:'#1D9E75',de:'#B0DDD0',tb:'#1D9E75',tbg:'#EFF9F5'},
+  tequila:{c:'#7A4800',bg:'#FDF0DC',dot:'#C47F17',de:'#F0CC80',tb:'#EF9F27',tbg:'#FDF8EE'},
+  whiskey:{c:'#6B2318',bg:'#FDF0EC',dot:'#C45030',de:'#F0A888',tb:'#D85A30',tbg:'#FDF5F2'},
+  rum:    {c:'#2E2878',bg:'#EFEFFE',dot:'#5048C8',de:'#B8B4EC',tb:'#7F77DD',tbg:'#F5F4FF'},
+  vodka:  {c:'#1A6B9A',bg:'#E8F4FB',dot:'#2E9ED4',de:'#A8D8F0',tb:'#2E9ED4',tbg:'#EFF8FD'},
+};
+const GLASS_SVG={
+  highball:c=>`<svg width="48" height="74" viewBox="0 0 48 74" fill="none" class="gsvg"><rect x="7" y="7" width="34" height="58" rx="4" fill="${c}22" stroke="${c}" stroke-width="1.5"/><rect x="11" y="12" width="26" height="36" rx="2" fill="${c}15"/><circle cx="17" cy="25" r="2.5" fill="${c}38"/><circle cx="24" cy="20" r="1.8" fill="${c}28"/><line x1="24" y1="7" x2="24" y2="4" stroke="${c}70" stroke-width="1.4" stroke-linecap="round"/><circle cx="24" cy="3" r="1.8" fill="${c}55"/></svg>`,
+  rocks:  c=>`<svg width="56" height="56" viewBox="0 0 56 56" fill="none" class="gsvg"><rect x="7" y="13" width="42" height="36" rx="4" fill="${c}22" stroke="${c}" stroke-width="1.5"/><rect x="11" y="17" width="34" height="20" rx="2" fill="${c}15"/><rect x="13" y="22" width="11" height="9" rx="2" fill="${c}28"/><rect x="28" y="19" width="9" height="7" rx="2" fill="${c}22"/></svg>`,
+  coupe:  c=>`<svg width="60" height="68" viewBox="0 0 60 68" fill="none" class="gsvg"><path d="M7 9 Q7 42 30 42 Q53 42 53 9 Z" fill="${c}22" stroke="${c}" stroke-width="1.5"/><path d="M11 13 Q11 38 30 38 Q49 38 49 13 Z" fill="${c}15"/><line x1="30" y1="42" x2="30" y2="62" stroke="${c}" stroke-width="1.5"/><line x1="17" y1="62" x2="43" y2="62" stroke="${c}" stroke-width="1.5" stroke-linecap="round"/><circle cx="42" cy="15" r="3.5" fill="${c}38"/></svg>`,
+  wine:   c=>`<svg width="52" height="76" viewBox="0 0 52 76" fill="none" class="gsvg"><path d="M9 7 Q7 34 26 38 Q45 34 43 7 Z" fill="${c}22" stroke="${c}" stroke-width="1.5"/><path d="M13 11 Q11 32 26 35 Q41 32 39 11 Z" fill="${c}15"/><line x1="26" y1="38" x2="26" y2="62" stroke="${c}" stroke-width="1.5"/><line x1="15" y1="62" x2="37" y2="62" stroke="${c}" stroke-width="1.5" stroke-linecap="round"/></svg>`,
+};
+const GLASS_LBL={highball:'🥤 Tall Glass  (Highball)',rocks:'🥃 Whiskey Glass  (Rocks)',coupe:'🍸 Small Cocktail Glass  (Coupe)',wine:'🍷 Wine Glass'};
+const CAT_LBL={spritz:'✨ Light & Fizzy  (Spritz)',sour:'🍋 Citrus Forward  (Sour)',mule:'🌿 Spirit + Citrus + Fizz  (Buck / Mule)',strong:'🥃 Spirit Forward'};
+const CAT_SHORT={spritz:'Light & Fizzy',sour:'Citrus Forward',mule:'Buck · Mule',strong:'Spirit Forward'};
+const FOR_LBL={solo:'Just Me',group:'Small Group',both:'Party'};
+const BCL={gin:'chip-gin',tequila:'chip-tequila',whiskey:'chip-whiskey',rum:'chip-rum',vodka:'chip-vodka'};
+const BADGES={pick:{cls:'fb-pick',l:'⭐ Bartender\'s Pick'},batch:{cls:'fb-batch',l:'🧊 Batch Friendly'},easy:{cls:'fb-easy',l:'✓ Beginner Friendly'},crowd:{cls:'fb-crowd',l:'🎉 Crowd Favourite'}};
+const STR_LBL={light:'Light',medium:'Medium',strong:'Strong',vstrong:'Very Strong'};
+const MOOD_MAP={spritz:['light','citrus'],sour:['citrus'],mule:['light','tropical'],strong:['bold']};
+
+function sdots(sp,st){
+  const s=SC[sp]||SC.vodka;
+  const isVS=st==='vstrong';
+  const lvl=isVS?4:st==='light'?1:st==='medium'?2:3;
+  const filled=isVS?'#8B0000':s.dot, empty=isVS?'#D44444':s.de;
+  return Array.from({length:isVS?4:3},(_,i)=>`<div class="sdot" style="background:${i<lvl?filled:empty}"></div>`).join('');
+}
+
+function glassVis(glass,sp,large=false){
+  const c=(SC[sp]||SC.vodka).dot;
+  const fn=GLASS_SVG[glass]||GLASS_SVG.highball;
+  return `<div style="transform:scale(${large?1.5:1});transform-origin:center">${fn(c)}</div>`;
+}
+
+function badgeHTML(badge,strength){
+  let h='';
+  if(strength==='vstrong') h+=`<span class="fbadge fb-vs">🔥 Very Strong</span>`;
+  if(badge&&BADGES[badge]) h+=`<span class="fbadge ${BADGES[badge].cls}">${BADGES[badge].l}</span>`;
+  return h;
+}
+
+let DRINKS=[
+  {id:1,name:'Gin & Tonic Spritz',sub:'Floral, light, easy to batch',why:'The easiest crowd-pleaser in the lineup. Works perfectly batched ahead — just top with tonic when serving.',taste:['🌸 Floral','🍋 Citrusy','✨ Fizzy'],whytags:['✓ Beginner Friendly','🧊 Batch Friendly','☀️ Hot Weather'],spirit:'gin',cat:'spritz',strength:'light',for:'both',glass:'highball',badge:'batch',mood:['light','citrus'],ingredients:[['30ml','Gin (Tanqueray No.10)'],['15ml','Cointreau'],['½ lemon','juiced'],['90ml','Tonic water'],['–','Ice + lemon slice']],steps:['Fill tall glass with ice.','Add gin, Cointreau, lemon juice.','Pour tonic gently along the side of the glass.','Stir once. Garnish with lemon slice.'],tip:'Pour tonic gently down the side of the glass.',tipwhy:'Pouring straight in destroys the carbonation — the bubbles carry the aroma and keep the drink lively.'},
+  {id:2,name:'Valencia Spritz',sub:'Citrusy, tropical-light, crowd friendly',why:'Bright orange citrus with a floral edge — works for almost any guest, even people who don\'t usually drink cocktails.',taste:['🍊 Citrusy','🌴 Tropical','✨ Fizzy'],whytags:['🎉 Crowd Favourite','🧊 Batch Friendly','✓ Easy'],spirit:'gin',cat:'spritz',strength:'light',for:'both',glass:'highball',badge:'crowd',mood:['light','citrus','tropical'],ingredients:[['30ml','Gin or Havana Rum'],['15ml','Cointreau'],['60ml','Fresh orange juice'],['½ lemon','squeezed'],['–','Soda water, to top'],['–','Ice + orange slice']],steps:['Fill tall glass with ice.','Add spirit, Cointreau, OJ, lemon.','Top with soda gently.','Stir once. Garnish with orange slice.'],tip:'Gin makes it more floral. Rum makes it softer and rounder.',tipwhy:'The spirit changes the whole character — gin adds a herbal edge, rum adds warmth and sweetness. Decide based on your guests.'},
+  {id:3,name:'Gin Buck',sub:'Clean, sharp, very easy drinking',why:'More character than a G&T without the effort. Three ingredients, one minute, genuinely impressive.',taste:['🍋 Sharp Citrus','🌿 Crisp','✨ Fizzy'],whytags:['✓ Beginner Friendly','⚡ Low Effort'],spirit:'gin',cat:'mule',strength:'light',for:'group',glass:'highball',badge:'easy',mood:['light','citrus'],ingredients:[['50ml','Gin (Tanqueray No.10)'],['–','Bundaberg Lemon, to top'],['½ lime','squeezed'],['–','Ice + lemon slice']],steps:['Fill tall glass with ice.','Add gin and lime squeeze.','Top with Bundaberg Lemon gently.','Garnish with lemon slice.'],tip:'Squeeze the lime directly into the glass, then drop it in.',tipwhy:'The lime oils from the skin add a subtle fragrance you\'d miss by squeezing separately.'},
+  {id:4,name:'Whiskey Buck',sub:'Soft, mellow, easy crowd pleaser',why:'Apple juice softens the whiskey into something approachable for guests who don\'t usually drink spirits.',taste:['🍎 Apple','🥃 Mellow','✨ Fizzy'],whytags:['🎉 Crowd Favourite','👋 Great For Whiskey Beginners','✓ Easy'],spirit:'whiskey',cat:'mule',strength:'light',for:'group',glass:'highball',badge:'crowd',mood:['light'],ingredients:[['50ml','Jack Daniel\'s or Ballantine\'s'],['90ml','Apple juice'],['½ lemon','squeezed'],['–','Soda water, to top'],['–','Ice + lemon slice']],steps:['Fill tall glass with ice.','Add whiskey, apple juice, lemon.','Top with soda, stir once.','Garnish with lemon slice.'],tip:'Jack Daniel\'s makes it sweeter. Ballantine\'s makes it cleaner and drier.',tipwhy:'Jack\'s Tennessee character adds vanilla and sweetness — great for guests who find Scotch too smoky. Ballantine\'s is smoother.'},
+  {id:5,name:'Passion Daiquiri Highball',sub:'Tropical, refreshing, light rum build',why:'Passion fruit and lime do most of the heavy lifting. Easy, tropical, and very hard to get wrong.',taste:['🌴 Tropical','🍋 Lime','✨ Fizzy'],whytags:['✓ Beginner Friendly','☀️ Hot Weather','⚡ Low Effort'],spirit:'rum',cat:'spritz',strength:'light',for:'both',glass:'highball',badge:'easy',mood:['light','tropical'],ingredients:[['30ml','Havana Club Rum'],['15ml','Cointreau'],['½ lime','juiced'],['–','Bundaberg Passion Fruit, to top'],['–','Ice + lime wheel']],steps:['Fill tall glass with ice.','Add rum, Cointreau, lime juice.','Top with Bundaberg Passion Fruit gently.','Stir once. Garnish with lime wheel.'],tip:'Go light on the rum — 30ml is the ceiling here.',tipwhy:'The Bundaberg does the flavour work. Too much rum overpowers the passion fruit and makes it boozier than intended.'},
+  {id:6,name:'Gin Lime Fizz',sub:'Zingy, bright, sessionable',why:'Sits between a proper sour and a highball — sessionable enough for multiple rounds with real cocktail character.',taste:['🍋 Zingy Lime','🌿 Crisp','✨ Fizzy'],whytags:['🍸 Good Introduction To Gin','⚡ Low Effort'],spirit:'gin',cat:'sour',strength:'medium',for:'both',glass:'highball',badge:'',mood:['citrus','light'],ingredients:[['45ml','Gin (Tanqueray No.10)'],['20ml','Cointreau'],['25ml','Fresh lime juice'],['10ml','Simple syrup'],['–','Soda water, small top'],['–','Ice + lime wheel']],steps:['Add gin, Cointreau, lime, syrup to shaker with ice.','Shake hard 12–15 seconds.','Strain into tall glass over fresh ice.','Add a small soda top. Garnish with lime wheel.'],tip:'Don\'t skip the soda top.',tipwhy:'The soda lifts the texture and brightens the whole drink. Without it you have a slightly flat sour. A small top is all it needs.'},
+  {id:7,name:'Gimlet',sub:'Clean, tart, gin-forward',why:'The purest way to taste your gin. Nothing to hide behind — the gin is the whole point.',taste:['🍋 Tart','🌿 Crisp','🍸 Spirit Forward'],whytags:['🍸 Good Introduction To Gin','🏆 Classic'],spirit:'gin',cat:'sour',strength:'medium',for:'solo',glass:'coupe',badge:'pick',mood:['citrus'],ingredients:[['60ml','Gin (Tanqueray No.10)'],['25ml','Fresh lime juice'],['15ml','Simple syrup'],['–','Ice, for shaking']],steps:['Add all to shaker with ice.','Shake hard 12–15 seconds.','Strain into a chilled glass.','Garnish with a lime wheel.'],tip:'Taste before straining and adjust the syrup.',tipwhy:'Limes vary in sourness. Adding a few more drops of syrup can transform the balance from sharp to perfect.'},
+  {id:8,name:"Tommy's Margarita",sub:'Stripped, agave-forward, no nonsense',why:'The Margarita with everything unnecessary removed. Just tequila, lime, and a touch of sweetness.',taste:['🌵 Agave','🍋 Sharp Lime','🔥 Bold'],whytags:['🏆 Classic','🎉 Great For Groups'],spirit:'tequila',cat:'sour',strength:'medium',for:'solo',glass:'coupe',badge:'pick',mood:['citrus'],ingredients:[['60ml','1800 Blanco Tequila'],['20ml','Cointreau'],['30ml','Fresh lime juice'],['10ml','Simple syrup'],['–','Ice, for shaking']],steps:['Add all to shaker with ice.','Shake hard 12–15 seconds.','Strain over fresh ice or into a chilled glass.','Garnish with lime wheel.'],tip:'No salt rim. No triple sec. Just three things.',tipwhy:'The salt rim and triple sec in a classic Margarita mask the tequila. Removing them forces the agave to carry the drink — which is the whole point.'},
+  {id:9,name:'Whiskey Sour + Cointreau',sub:'Clean, refined, Scotch-forward',why:'A classic whiskey sour made better with Cointreau — adds orange depth and softens the Scotch edges beautifully.',taste:['🍋 Citrusy','🥃 Smooth Whiskey','🍊 Orange'],whytags:['🏆 Elevated Classic','👋 Good Introduction To Whiskey'],spirit:'whiskey',cat:'sour',strength:'medium',for:'solo',glass:'coupe',badge:'',mood:['citrus'],ingredients:[['60ml','Ballantine\'s'],['20ml','Cointreau'],['30ml','Fresh lemon juice'],['10ml','Simple syrup'],['–','Ice, for shaking']],steps:['Add all to shaker with ice.','Shake hard 12–15 seconds.','Strain over ice or into a chilled glass.','Garnish with lemon peel.'],tip:'Use Cointreau, not triple sec.',tipwhy:'Cointreau is a premium orange liqueur — it adds real orange flavour and rounds the Scotch edges. Triple sec has a harsher, more artificial sweetness.'},
+  {id:10,name:'New York Sour',sub:'Elegant, layered, great to show off',why:'Looks impressive without much extra effort. The float creates a layered effect that always gets comments.',taste:['🍋 Citrusy','🥃 Whiskey','✨ Elegant'],whytags:['👀 Great To Show Off','🏆 Elevated Classic'],spirit:'whiskey',cat:'sour',strength:'medium',for:'solo',glass:'coupe',badge:'pick',mood:['citrus','bold'],ingredients:[['55ml','Ballantine\'s'],['20ml','Cointreau'],['25ml','Fresh lemon juice'],['10ml','Simple syrup'],['–','Bundaberg Lemon, float']],steps:['Shake whiskey, Cointreau, lemon, syrup with ice.','Strain over fresh ice.','Pour Bundaberg Lemon slowly over the back of a spoon on top.','Garnish with lemon peel.'],tip:'The Bundaberg float only works if you pour it over a spoon.',tipwhy:'Pouring over a spoon slows the liquid so it settles on top instead of mixing. It creates the layered look — and it\'s easier than it sounds.'},
+  {id:11,name:'Paloma',sub:'Tart, refreshing, tequila classic',why:'Mexico\'s most popular cocktail for good reason. Tart, refreshing, and endlessly drinkable.',taste:['🍊 Grapefruit','🍋 Tart','✨ Refreshing'],whytags:['🏆 Classic','🎉 Crowd Favourite','☀️ Hot Weather'],spirit:'tequila',cat:'sour',strength:'medium',for:'both',glass:'highball',badge:'crowd',mood:['citrus','tropical'],ingredients:[['50ml','1800 Blanco Tequila'],['60ml','Fresh grapefruit juice'],['15ml','Fresh lime juice'],['10ml','Simple syrup'],['pinch','Salt'],['–','Soda water, to top'],['–','Ice + grapefruit slice']],steps:['Add tequila, grapefruit, lime, syrup, salt to shaker.','Shake briefly — 8–10 seconds.','Strain into tall glass over fresh ice.','Top with soda. Garnish with grapefruit slice.'],tip:'The pinch of salt is not optional.',tipwhy:'Salt suppresses bitterness and amplifies the grapefruit flavour. It makes the drink taste significantly brighter. Don\'t skip it.'},
+  {id:12,name:'Rum Mule',sub:'Ginger-forward, tropical, no shaking needed',why:'No shaking required. Lime, rum, ginger — simple as it gets and always a hit.',taste:['🫚 Ginger','🌴 Tropical','🍋 Lime'],whytags:['✓ Beginner Friendly','⚡ Low Effort','☀️ Hot Weather'],spirit:'rum',cat:'mule',strength:'medium',for:'both',glass:'highball',badge:'easy',mood:['tropical','light'],ingredients:[['50ml','Havana Club Rum'],['1 lime','juiced'],['–','Ginger beer, to top'],['–','Ice + lime wedge']],steps:['Fill tall glass with ice.','Add rum and lime juice.','Top with ginger beer — no mixing needed.','Garnish with lime wedge.'],tip:'Use ginger beer, not ginger ale.',tipwhy:'Ginger beer has real ginger heat and spice. Ginger ale is just sweet with a faint ginger flavour. The heat from real ginger beer is the whole point of the drink.'},
+  {id:13,name:'Whiskey Smash',sub:'Minty, citrusy, punchy',why:'Jack Daniel\'s at its absolute best. The vanilla and caramel in JD pair perfectly with mint and lemon.',taste:['🌿 Minty','🍋 Citrusy','🥃 Bold Whiskey'],whytags:['🏆 Bartender\'s Pick','🎉 Crowd Favourite'],spirit:'whiskey',cat:'strong',strength:'strong',for:'solo',glass:'rocks',badge:'pick',mood:['bold','citrus'],ingredients:[['60ml','Jack Daniel\'s'],['25ml','Fresh lemon juice'],['15ml','Simple syrup'],['6–8 leaves','Fresh mint'],['–','Ice, for shaking']],steps:['Muddle mint gently in shaker — press firmly but don\'t tear.','Add Jack, lemon, syrup and ice.','Shake hard 12–15 seconds.','Strain over crushed ice.','Garnish with mint sprig and lemon slice.'],tip:'Muddle gently — don\'t shred the mint.',tipwhy:'Tearing mint releases the bitter green chlorophyll, which makes the drink taste harsh. Bruising it gently releases the aromatic oils — that\'s the flavour you want.'},
+  {id:14,name:'Sidecar',sub:'Sharp, citrusy, spirit-forward classic',why:'A proper classic. Spirit-forward, dry, and sharp — Cointreau does all the sweetening.',taste:['🍋 Sharp Citrus','🔥 Spirit Forward','🥃 Dry'],whytags:['🏆 Classic','🍸 Good Introduction To Sours'],spirit:'whiskey',cat:'strong',strength:'strong',for:'solo',glass:'coupe',badge:'',mood:['bold','citrus'],ingredients:[['50ml','Jack Daniel\'s'],['25ml','Cointreau'],['20ml','Fresh lemon juice'],['–','Ice, for shaking']],steps:['Add all to shaker with ice.','Shake hard 12–15 seconds.','Strain into a chilled glass.','Garnish with lemon peel.'],tip:'Don\'t add simple syrup.',tipwhy:'The Cointreau provides all the sweetness this drink needs. Adding syrup softens the spirit-forward edge that makes a Sidecar worth drinking.'},
+  {id:15,name:'House Sour',sub:'Tequila-forward, sharp, balanced',why:'Halfway between a Margarita and a proper sour. Strong tequila character balanced by citrus.',taste:['🌵 Tequila','🍋 Sharp Citrus','🍊 Orange'],whytags:['🌵 Good Introduction To Tequila Sours'],spirit:'tequila',cat:'strong',strength:'strong',for:'solo',glass:'coupe',badge:'',mood:['bold','citrus'],ingredients:[['60ml','1800 Blanco Tequila'],['25ml','Cointreau'],['30ml','Fresh lemon juice'],['10ml','Simple syrup'],['–','Ice, for shaking']],steps:['Add all to shaker with ice.','Shake hard 12–15 seconds.','Strain over fresh ice.','Garnish with lemon wheel.'],tip:'Taste before straining.',tipwhy:'Lemon varies significantly in sourness. A quick taste and an extra few drops of syrup can make the difference between sharp and perfectly balanced.'},
+  {id:16,name:'Jungle Bird Riff',sub:'Tropical, slightly bitter, complex',why:'The most complex build in the collection. Tropical, rich, with an unexpected bittersweet finish.',taste:['🌴 Tropical','🍫 Bittersweet','🔥 Rich'],whytags:['🏆 Bartender\'s Pick','🌴 Tropical Night'],spirit:'rum',cat:'strong',strength:'strong',for:'solo',glass:'rocks',badge:'pick',mood:['bold','tropical'],ingredients:[['50ml','Havana Club Rum'],['20ml','Cointreau'],['25ml','Fresh lime juice'],['10ml','Simple syrup'],['–','Bundaberg Passion Fruit, small top'],['–','Ice, for shaking']],steps:['Add rum, Cointreau, lime, syrup to shaker with ice.','Shake hard 12–15 seconds.','Strain over fresh ice.','Add a small Bundaberg Passion Fruit top — pour gently.','Garnish with lime wheel.'],tip:'Go small on the Bundaberg float.',tipwhy:'Too much passion fruit soda turns this from a complex rum cocktail into a sweet tropical mixer. A splash on top adds aroma and a touch of sweetness without taking over.'},
+  // Vodka
+  {id:17,name:'Vodka Lemon Spritz',sub:'Crisp, citrusy, effortlessly easy',why:'Vodka\'s neutrality makes this the most drinkable spritz on the list. Clean, bright, and endlessly refreshing.',taste:['🍋 Crisp Citrus','✨ Fizzy','🧊 Clean'],whytags:['✓ Beginner Friendly','🧊 Batch Friendly','☀️ Hot Weather'],spirit:'vodka',cat:'spritz',strength:'light',for:'both',glass:'highball',badge:'batch',mood:['light','citrus'],ingredients:[['40ml','Smirnoff Vodka'],['15ml','Cointreau'],['½ lemon','juiced'],['–','Bundaberg Lemon, to top'],['–','Ice + lemon slice']],steps:['Fill tall glass with ice.','Add vodka, Cointreau, lemon juice.','Top with Bundaberg Lemon gently.','Stir once. Garnish with lemon slice.'],tip:'Batch the vodka + Cointreau + lemon ahead.',tipwhy:'Pre-mixing the base means you can pour for a group in seconds — just top with Bundaberg per glass when guests arrive.'},
+  {id:18,name:'Passion Mule',sub:'Tropical, sweet-tart, party favourite',why:'Passion fruit Bundaberg turns a simple vodka mule into something far more interesting. Always a crowd hit.',taste:['🌴 Passion Fruit','🍋 Sweet-Tart','✨ Fizzy'],whytags:['🎉 Crowd Favourite','✓ Easy','☀️ Hot Weather'],spirit:'vodka',cat:'mule',strength:'medium',for:'both',glass:'highball',badge:'crowd',mood:['light','tropical'],ingredients:[['50ml','Smirnoff Vodka'],['½ lime','juiced'],['10ml','Cointreau'],['–','Bundaberg Passion Fruit, to top'],['–','Ice + lime wheel']],steps:['Fill tall glass with ice.','Add vodka, Cointreau, lime juice.','Top with Bundaberg Passion Fruit.','Garnish with lime wheel.'],tip:'Add the Cointreau even though it\'s a small amount.',tipwhy:'Cointreau bridges the vodka and passion fruit — without it, the drink tastes thin and one-dimensional. It\'s the glue.'},
+  {id:19,name:'Vodka Citrus Sour',sub:'Sharp, clean, properly balanced',why:'Vodka\'s neutrality lets the citrus shine without distraction. Clean and sharp — a proper sour.',taste:['🍋 Sharp Citrus','🧊 Clean','🍸 Balanced'],whytags:['🍸 Good Introduction To Sours','✓ Easy'],spirit:'vodka',cat:'sour',strength:'medium',for:'solo',glass:'coupe',badge:'pick',mood:['citrus'],ingredients:[['60ml','Smirnoff Vodka'],['20ml','Cointreau'],['25ml','Fresh lemon juice'],['10ml','Simple syrup'],['–','Ice, for shaking']],steps:['Add all to shaker with ice.','Shake hard 12–15 seconds.','Strain into a chilled glass.','Garnish with a lemon twist.'],tip:'With vodka, the citrus ratio matters more than with any other spirit.',tipwhy:'Vodka adds alcohol but no flavour — so the lemon and syrup balance becomes the whole drink. Small adjustments make a big difference.'},
+  {id:20,name:'Vodka OJ Sour',sub:'Fruity, smooth, crowd-ready',why:'Orange and citrus do all the flavour lifting. Friendly, approachable, and practically foolproof.',taste:['🍊 Orange','🍋 Bright Citrus','🧊 Smooth'],whytags:['🎉 Crowd Favourite','✓ Beginner Friendly','⚡ Easy'],spirit:'vodka',cat:'sour',strength:'medium',for:'both',glass:'highball',badge:'easy',mood:['citrus','tropical'],ingredients:[['45ml','Smirnoff Vodka'],['15ml','Cointreau'],['60ml','Fresh orange juice'],['15ml','Fresh lemon juice'],['10ml','Simple syrup'],['–','Ice, for shaking']],steps:['Add all to shaker with ice.','Shake hard 12–15 seconds.','Strain into tall glass over fresh ice.','Garnish with orange slice.'],tip:'Squeeze the orange juice fresh.',tipwhy:'Carton OJ has a flat, processed sweetness that makes this drink taste like a mixer, not a cocktail. Fresh OJ has brightness and slight bitterness that transforms it.'},
+  {id:21,name:'The Fourth Note',sub:'All five spirits · Handle with care',why:'Named after the bar itself. Five spirits, one glass — a Long Island done with what\'s actually on the shelf.',taste:['🥃 Complex Spirits','🍋 Citrusy','🔥 Legendary'],whytags:['💀 Very Strong','⚠️ Sip Slowly'],spirit:'vodka',cat:'strong',strength:'vstrong',for:'solo',glass:'highball',badge:'',mood:['bold','citrus'],warning:'Contains five spirits. Approximately 4–5× a standard cocktail. Sip slowly. Do not drive.',ingredients:[['20ml','Smirnoff Vodka'],['20ml','Tanqueray No.10 Gin'],['20ml','Havana Club Rum'],['20ml','1800 Blanco Tequila'],['15ml','Cointreau'],['20ml','Fresh lemon juice'],['10ml','Simple syrup'],['–','Bundaberg Lemon, to top'],['–','Ice + lemon slice']],steps:['Fill tall glass with ice.','Add all spirits and Cointreau directly — do not shake.','Add lemon juice and simple syrup.','Top slowly with Bundaberg Lemon.','Stir gently once. Garnish with lemon slice.'],tip:'Build directly in the glass — do not shake.',tipwhy:'Shaking five spirits aerates and heats them, which makes the alcohol hit much faster. Building over ice keeps it controlled and cold, which actually makes it safer to drink.'},
+];
+
+let nextId=22,selId=null,editId=null,bnLoaded=false,searchQ='';
+let AF={spirit:[],mood:[],strength:[],occasion:[]};
+
+function filterD(){
+  return DRINKS.filter(d=>{
+    const spOk=AF.spirit.length===0||AF.spirit.includes(d.spirit);
+    const mOk=AF.mood.length===0||AF.mood.some(m=>(d.mood||[]).includes(m));
+    const stOk=AF.strength.length===0||AF.strength.includes(d.strength);
+    const oOk=AF.occasion.length===0||(AF.occasion.includes('solo')&&(d.for==='solo'||d.for==='both'))||(AF.occasion.includes('group')&&(d.for==='group'||d.for==='both'))||(AF.occasion.includes('both')&&d.for==='both');
+    const qOk=!searchQ||d.name.toLowerCase().includes(searchQ)||d.sub.toLowerCase().includes(searchQ)||d.spirit.includes(searchQ)||(d.taste||[]).some(t=>t.toLowerCase().includes(searchQ))||(d.whytags||[]).some(t=>t.toLowerCase().includes(searchQ));
+    return spOk&&mOk&&stOk&&oOk&&qOk;
+  });
+}
+
+function renderCards(){
+  const grid=document.getElementById('grid');
+  const vis=filterD();
+  const total=DRINKS.length;
+  document.getElementById('status-text').textContent=vis.length===total?`${total} drinks`:`${vis.length} of ${total} drinks`;
+  document.getElementById('hdr-sub').textContent=`Home Bar · ${total} Drinks`;
+  document.getElementById('clear-lnk').style.display=(hasAF()||searchQ)?'inline':'none';
+  renderATags();
+
+  grid.innerHTML=vis.map(d=>{
+    const s=SC[d.spirit]||SC.vodka;
+    const isVS=d.strength==='vstrong';
+    return `<div class="card${selId===d.id?' sel':''}${isVS?' vs-card':''}" onclick="openRecipe(${d.id})">
+      <button class="cedit" onclick="openEdit(${d.id});event.stopPropagation()" title="Edit">
+        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#444" stroke-width="2.5"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.12 2.12 0 0 1 3 3L12 15l-4 1 1-4Z"/></svg>
+      </button>
+      <div class="card-vis" style="background:${isVS?'#120000':s.bg}">
+        ${glassVis(d.glass,d.spirit)}
+        <div class="cbf">${badgeHTML(d.badge,d.strength)}</div>
+      </div>
+      <div class="cbody">
+        <div class="cchips">
+          <span class="chip ${BCL[d.spirit]}">${d.spirit[0].toUpperCase()+d.spirit.slice(1)}</span>
+          <span class="chip chip-cat">${CAT_SHORT[d.cat]}</span>
+        </div>
+        <div class="cname">${d.name}</div>
+        <div class="ctaste">${(d.taste||[]).map(t=>`<span class="ttag">${t}</span>`).join('')}</div>
+        <div class="cwhy">${(d.whytags||[]).slice(0,2).map(w=>`<span class="wtag">${w}</span>`).join('')}</div>
+        <div class="cfoot">
+          <div class="strength-row" style="display:flex;align-items:center;gap:4px">
+            <div class="sdots">${sdots(d.spirit,d.strength)}</div>
+            <span class="slabel"${isVS?' style="color:#8B0000;font-weight:600"':''}>${STR_LBL[d.strength]}</span>
+          </div>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+
+  if(vis.length<total){
+    const h=total-vis.length;
+    grid.innerHTML+=`<div class="disc-card"><div style="font-size:26px;margin-bottom:2px">🔍</div><h3>More drinks hidden</h3><p>${h} drink${h!==1?'s':''} don't match your filters</p><button class="disc-btn" onclick="resetFilters()">Show All</button></div>`;
+  }
+}
+
+function openRecipe(id){
+  const d=DRINKS.find(x=>x.id===id);if(!d) return;
+  selId=id;editId=null;bnLoaded=false;
+  const s=SC[d.spirit]||SC.vodka;
+  const isVS=d.strength==='vstrong';
+
+  // Visual header
+  document.getElementById('rpvis').style.background=isVS?'#120000':s.bg;
+  document.getElementById('rpvis').innerHTML=`
+    <button class="rpcls" onclick="closePanel()"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="${isVS?'#FF9090':'#333'}" stroke-width="2.5"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
+    ${glassVis(d.glass,d.spirit,true)}
+    <div style="position:absolute;top:10px;left:10px;display:flex;flex-direction:column;gap:3px">${badgeHTML(d.badge,d.strength)}</div>`;
+
+  // Why tags at top of panel — quick decision info
+  document.getElementById('rp-why-bar').innerHTML=(d.whytags||[]).map(w=>`<span class="rp-why-tag">${w}</span>`).join('');
+
+  document.getElementById('rptitle').textContent=d.name;
+  document.getElementById('rpsub').textContent=d.sub;
+  document.getElementById('rpchips').innerHTML=`<span class="chip ${BCL[d.spirit]}">${d.spirit[0].toUpperCase()+d.spirit.slice(1)}</span><span class="chip chip-cat">${CAT_LBL[d.cat]||CAT_SHORT[d.cat]}</span>`;
+
+  // Taste banner
+  document.getElementById('rptaste').innerHTML=(d.taste||[]).map(t=>`<span class="taste-item">${t}</span>`).join('');
+
+  // VS warning
+  document.getElementById('rp-vs-warn').innerHTML=isVS&&d.warning
+    ?`<div class="vs-warn"><span style="font-size:17px">⚠️</span><div><strong style="display:block;font-weight:700;margin-bottom:2px">Handle With Care</strong>${d.warning}</div></div>`:'';
+
+  // Meta
+  document.getElementById('rpmeta').innerHTML=`
+    <div class="rpmc"><div class="rpml">Strength</div><div class="rpmv"><div class="sdots">${sdots(d.spirit,d.strength)}</div><span${isVS?' style="color:#8B0000;font-weight:600"':''}>${STR_LBL[d.strength]}</span></div></div>
+    <div class="rpmc"><div class="rpml">Glass</div><div class="rpmv" style="font-size:12px">${GLASS_LBL[d.glass]||'🥤 Tall Glass'}</div></div>
+    <div class="rpmc"><div class="rpml">For</div><div class="rpmv">${FOR_LBL[d.for]||'Solo'}</div></div>`;
+
+  // Why you'll like it block
+  const wyEl=document.getElementById('rp-why-block');
+  wyEl.className=`rp-why-block${isVS?' vs-why':''}`;
+  wyEl.style.cssText=`border-left-color:${isVS?'#8B0000':s.dot};background:${isVS?'#1A0000':s.tbg};color:${isVS?'#FFB0B0':''};`;
+  wyEl.textContent=d.why||'';
+
+  // Ingredients
+  document.getElementById('rpings').innerHTML=d.ingredients.map(([q,n])=>`<span class="iqty">${q}</span><span class="iname">${n}</span>`).join('');
+
+  // Steps
+  document.getElementById('rpsteps').innerHTML=d.steps.map((st,i)=>`<div class="srow"><div class="snum" style="background:${isVS?'#2D0000':s.bg};color:${isVS?'#FF9090':s.c}">${i+1}</div><span>${st}</span></div>`).join('');
+
+  // Tip with Why
+  document.getElementById('rptip').innerHTML=d.tip
+    ?`<div class="tip-block" style="background:${isVS?'#1A0000':s.tbg};border-left-color:${isVS?'#8B0000':s.dot}">
+        <span style="font-size:16px">💡</span>
+        <div class="tip-inner">
+          <div class="tip-lbl">Bartender Tip</div>
+          <div class="tip-text" style="color:${isVS?'#FFB0B0':''}">${d.tip}</div>
+          ${d.tipwhy?`<div class="tip-why"><span class="tip-why-lbl">Why?</span>${d.tipwhy}</div>`:''}
+        </div>
+      </div>`:'';
+
+  // Reset bartender notes
+  document.getElementById('bn-wrap').classList.remove('open');
+  document.getElementById('bn-list').innerHTML='';
+  document.getElementById('bn-load').style.display='none';
+  document.getElementById('bn-btn').disabled=false;
+  document.getElementById('bn-btn').innerHTML=`<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg> Bartender Notes`;
+
+  showView('recipe');renderCards();
+  document.getElementById('rpscroll').scrollTop=0;
+}
+
+async function loadNotes(){
+  if(bnLoaded) return;
+  const d=DRINKS.find(x=>x.id===selId);if(!d) return;
+  const wrap=document.getElementById('bn-wrap'),load=document.getElementById('bn-load'),list=document.getElementById('bn-list'),btn=document.getElementById('bn-btn');
+  wrap.classList.add('open');load.style.display='flex';list.innerHTML='';btn.disabled=true;
+  try{
+    const res=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-6',max_tokens:900,messages:[{role:'user',content:`Expert home bartender. Give practical notes for "${d.name}" (${d.sub}). Spirit: ${d.spirit}. Ingredients: ${d.ingredients.map(([q,n])=>q+' '+n).join(', ')}. Home bar includes: Tanqueray No.10 Gin, 1800 Blanco Tequila, Jack Daniel's, Ballantine's, Johnnie Walker Black, Havana Club Rum, Smirnoff Vodka, Cointreau, Bundaberg mixers, fresh citrus, OJ, apple juice, simple syrup. Return ONLY a JSON array of 4 objects no markdown: [{"icon":"emoji","title":"Short plain-language title","note":"1-2 sentences plain language practical instruction","why":"1 sentence explaining why this matters"}]. Topics: 1)Glass and ice prep 2)Key technique in plain language 3)Most common mistake and how to avoid it 4)A small twist or variation using only available ingredients.`}]})});
+    const data=await res.json();
+    const notes=JSON.parse(data.content.map(b=>b.text||'').join('').replace(/```json|```/g,'').trim());
+    list.innerHTML=notes.map(n=>`<div class="bn-item"><div class="bn-item-hd"><span class="bn-icon">${n.icon}</span><span class="bn-title">${n.title}</span></div><div class="bn-note">${n.note}</div>${n.why?`<div class="bn-why"><span class="bn-why-lbl">Why?</span>${n.why}</div>`:''}</div>`).join('');
+    bnLoaded=true;
+  }catch(e){list.innerHTML=`<div class="bn-item"><span>⚠️ Couldn't load notes right now.</span></div>`;}
+  load.style.display='none';btn.disabled=false;
+}
+
+function openAdd(){
+  editId=null;selId=null;
+  document.getElementById('fptitle').textContent='Add a Drink';
+  document.getElementById('fpsub').textContent='Describe it or fill manually';
+  document.getElementById('ai-box').style.display='';
+  document.getElementById('ai-prompt').value='';
+  document.getElementById('ai-st').textContent='';
+  const btn=document.getElementById('ai-btn');btn.disabled=false;
+  btn.innerHTML='<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg> Generate';
+  clearForm();showView('form');renderCards();
+}
+
+function openEdit(id){
+  const d=DRINKS.find(x=>x.id===id);if(!d) return;
+  editId=id;selId=null;
+  document.getElementById('fptitle').textContent='Edit Drink';
+  document.getElementById('fpsub').textContent=d.name;
+  document.getElementById('ai-box').style.display='none';
+  fillForm(d);showView('form');renderCards();
+}
+
+function showView(v){
+  document.getElementById('panel').classList.remove('closed');
+  document.getElementById('recipe-view').style.display=v==='recipe'?'flex':'none';
+  document.getElementById('form-view').style.display=v==='form'?'flex':'none';
+}
+
+function closePanel(){
+  document.getElementById('panel').classList.add('closed');
+  document.getElementById('recipe-view').style.display='none';
+  document.getElementById('form-view').style.display='none';
+  selId=null;editId=null;renderCards();
+}
+
+function clearForm(){
+  ['f-name','f-sub','f-why','f-tip'].forEach(i=>{const el=document.getElementById(i);if(el)el.value='';});
+  document.getElementById('f-spirit').value='vodka';
+  document.getElementById('f-cat').value='spritz';
+  document.getElementById('f-strength').value='light';
+  document.getElementById('f-for').value='group';
+  document.getElementById('f-glass').value='highball';
+  document.getElementById('f-badge').value='';
+  document.getElementById('ing-list').innerHTML='';
+  document.getElementById('slist').innerHTML='';
+  addIng();addIng();addIng();addStep();addStep();
+}
+
+function fillForm(d){
+  document.getElementById('f-name').value=d.name;
+  document.getElementById('f-sub').value=d.sub;
+  document.getElementById('f-why').value=d.why||'';
+  document.getElementById('f-spirit').value=d.spirit;
+  document.getElementById('f-cat').value=d.cat;
+  document.getElementById('f-strength').value=d.strength;
+  document.getElementById('f-for').value=d.for;
+  document.getElementById('f-glass').value=d.glass||'highball';
+  document.getElementById('f-badge').value=d.badge||'';
+  document.getElementById('f-tip').value=d.tip||'';
+  document.getElementById('ing-list').innerHTML='';d.ingredients.forEach(([q,n])=>addIng(q,n));
+  document.getElementById('slist').innerHTML='';d.steps.forEach(s=>addStep(s));
+}
+
+function addIng(q='',n=''){
+  const l=document.getElementById('ing-list'),r=document.createElement('div');r.className='ing-rf';
+  r.innerHTML=`<input type="text" placeholder="30ml" value="${q}"><input type="text" placeholder="Ingredient" value="${n}"><button class="rm-btn" onclick="this.parentElement.remove()">×</button>`;
+  l.appendChild(r);
+}
+
+function addStep(t=''){
+  const l=document.getElementById('slist'),i=l.children.length+1,r=document.createElement('div');r.className='srf';
+  r.innerHTML=`<span class="srf-n">${i}</span><textarea placeholder="Step ${i}...">${t}</textarea><button class="rm-btn" onclick="this.parentElement.remove();reindex()">×</button>`;
+  l.appendChild(r);
+}
+
+function reindex(){document.querySelectorAll('.srf-n').forEach((e,i)=>e.textContent=i+1);}
+
+async function genAI(){
+  const p=document.getElementById('ai-prompt').value.trim();
+  if(!p){document.getElementById('ai-st').textContent='Describe your drink first.';return;}
+  const btn=document.getElementById('ai-btn'),st=document.getElementById('ai-st');
+  btn.disabled=true;btn.innerHTML='Generating...';st.textContent='✦ Crafting your drink...';
+  try{
+    const res=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-6',max_tokens:1200,system:`Creative home bartender assistant. Generate cocktail using ONLY: Tanqueray No.10 Gin, 1800 Blanco Tequila, Jack Daniel's, Ballantine's, Havana Club Rum, Smirnoff Vodka, Cointreau. Mixers: Bundaberg Passion Fruit, Bundaberg Lemon, OJ, Apple juice, Fresh limes, Fresh lemons, Soda water, Tonic water, Simple syrup. Respond ONLY valid JSON no markdown: {"name":"","sub":"short plain-language descriptor","why":"1-2 sentences why someone would love this","taste":["emoji word","emoji word","emoji word"],"whytags":["tag1","tag2"],"spirit":"gin|tequila|whiskey|rum|vodka","cat":"spritz|sour|mule|strong","strength":"light|medium|strong|vstrong","for":"solo|group|both","glass":"highball|rocks|coupe|wine","badge":"pick|batch|easy|crowd|","mood":["light","citrus","tropical","bold"],"ingredients":[["amount","name"]],"steps":["Step."],"tip":"One practical tip.","tipwhy":"One sentence explaining why."}`,messages:[{role:'user',content:p}]})});
+    const data=await res.json();
+    const obj=JSON.parse(data.content.map(b=>b.text||'').join('').replace(/```json|```/g,'').trim());
+    fillForm(obj);
+    st.textContent='✦ Draft ready — review and save';
+  }catch(e){st.textContent='Something went wrong. Try again.';}
+  btn.disabled=false;btn.innerHTML='<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg> Generate';
+}
+
+function saveDrink(){
+  const name=document.getElementById('f-name').value.trim();if(!name){alert('Add a drink name.');return;}
+  const ings=[...document.querySelectorAll('#ing-list .ing-rf')].map(r=>{const i=r.querySelectorAll('input');return[i[0].value.trim()||'–',i[1].value.trim()];}).filter(([,n])=>n);
+  const steps=[...document.querySelectorAll('#slist textarea')].map(t=>t.value.trim()).filter(Boolean);
+  const cat=document.getElementById('f-cat').value;
+  const drink={id:editId||nextId++,name,sub:document.getElementById('f-sub').value.trim(),why:document.getElementById('f-why').value.trim(),taste:[],whytags:[],spirit:document.getElementById('f-spirit').value,cat,strength:document.getElementById('f-strength').value,for:document.getElementById('f-for').value,glass:document.getElementById('f-glass').value,badge:document.getElementById('f-badge').value,mood:MOOD_MAP[cat]||['light'],ingredients:ings,steps,tip:document.getElementById('f-tip').value.trim(),tipwhy:''};
+  if(editId){const i=DRINKS.findIndex(x=>x.id===editId);DRINKS[i]=drink;}else DRINKS.push(drink);
+  selId=drink.id;openRecipe(drink.id);
+}
+
+function hasAF(){return Object.values(AF).some(v=>v.length>0);}
+
+function renderATags(){
+  const wrap=document.getElementById('atags');
+  const lbls={spirit:{gin:'🌿 Gin',tequila:'🌵 Tequila',whiskey:'🥃 Whiskey',rum:'🌴 Rum',vodka:'🧊 Vodka'},mood:{light:'✨ Light',citrus:'🍋 Citrus',tropical:'🌴 Tropical',bold:'🔥 Bold'},strength:{light:'🟢 Light',medium:'🟡 Medium',strong:'🔴 Strong',vstrong:'💀 Very Strong'},occasion:{solo:'👤 Just Me',group:'👥 Small Group',both:'🎉 Party'}};
+  let html='';
+  Object.entries(AF).forEach(([g,vals])=>vals.forEach(v=>{const lbl=(lbls[g]&&lbls[g][v])||v;html+=`<span class="atag">${lbl}<button onclick="removeFilter('${g}','${v}')">×</button></span>`;}));
+  wrap.innerHTML=html;
+}
+
+function removeFilter(g,v){
+  AF[g]=AF[g].filter(x=>x!==v);
+  document.querySelectorAll(`.pill[data-g="${g}"][data-v="${v}"]`).forEach(p=>p.className='pill');
+  renderCards();
+}
+
+function resetFilters(){
+  AF={spirit:[],mood:[],strength:[],occasion:[]};
+  searchQ='';document.getElementById('searchInput').value='';
+  document.querySelectorAll('.pill').forEach(p=>p.className='pill');
+  renderCards();
+}
+
+document.querySelectorAll('.pill').forEach(pill=>{
+  pill.addEventListener('click',()=>{
+    const g=pill.dataset.g,v=pill.dataset.v,ac=pill.dataset.ac||'on';
+    if(!AF[g]) AF[g]=[];
+    const arr=AF[g];
+    if(arr.includes(v)){AF[g]=arr.filter(x=>x!==v);pill.className='pill';}
+    else{arr.push(v);pill.classList.add(ac);}
+    renderCards();
+  });
+});
+
+document.getElementById('searchInput').addEventListener('input',e=>{
+  searchQ=e.target.value.toLowerCase().trim();renderCards();
+});
+
+renderCards();
+</script>
+</body>
+</html>

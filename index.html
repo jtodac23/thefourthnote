@@ -235,18 +235,18 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 </head>
 <body>
 <style>
-  body { display: none; }
+  body { visibility: hidden; }
 </style>
 <script>
   const password = prompt("Enter password to view menu:");
   if (password === "JANGANCAKAP") {
-    document.body.style.display = "block";
+    document.body.style.visibility = "visible";
   } else {
     document.title = "Access Denied";
     window.stop();
     document.documentElement.innerHTML = "<h1 style='text-align:center;margin-top:50px;'>Access Denied</h1>";
   }
-</script>  
+</script> 
 <div class="hdr">
   <div class="logo">
     <div class="logo-mark">
